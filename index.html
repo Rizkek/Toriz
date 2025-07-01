@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Stok Toko</title>
+    <link rel="shortcut icon" type="image/x-icon" href="LOGO-01.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body, .card { transition: background-color 0.3s ease, color 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200">
+    
+    <div class="flex h-screen">
+        <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-800 shadow-lg">
+            <div class="flex items-center justify-center h-20 border-b dark:border-slate-700">
+                <h1 class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Stok Toko</h1>
+            </div>
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <a href="#" class="desktop-nav-btn flex items-center p-3 text-base font-normal rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    <span class="ml-3">Daftar Stok</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t dark:border-slate-700">
+                 <button id="theme-toggle" class="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <span class="ml-2">Ganti Tema</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="md:hidden sticky top-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg shadow-sm">
+                <div class="container mx-auto flex justify-between items-center p-4">
+                    <h1 id="page-title" class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Daftar Stok</h1>
+                    <button id="theme-toggle-mobile" class="p-2 rounded-full text-slate-500 dark:text-slate-400">
+                        </button>
+                </div>
+            </header>
+            
+            <main id="app-container" class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 dark:bg-slate-900 pb-24 md:pb-8">
+                <div class="container mx-auto p-4 md:p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="w-full md:w-2/3 space-y-8">
+                             <div id="filter-card" class="card bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-3 gap-4 items-center">
+                                    <input type="text" id="searchInput" placeholder="Cari Produk..." onkeyup="searchProducts()" class="lg:col-span-2 w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <select id="filterCategory" class="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="Semua">Semua Kategori</option>
+                                        <option value="Rokok">Rokok</option>
+                                        <option value="Sembako">Sembako</option>
+                                        <option value="Cemilan">Cemilan</option>
+                                        <option value="Minuman">Minuman</option>
+                                    </select>
+                                    <button id="importBtn" class="sm:col-span-2 lg:col-span-1 w-full flex-shrink-0 flex items-center justify-center gap-2 bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                        <span>Impor</span>
+                                    </button>
+                                    <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden">
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto card bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+                                <table id="productTable" class="w-full text-left">
+                                    <thead class="border-b border-slate-200 dark:border-slate-700">
+                                        <tr class="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                                            <th class="p-4">Produk</th>
+                                            <th class="p-4 text-center">Qty</th>
+                                            <th class="p-4 text-center">Harga</th>
+                                            <th class="p-4 text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="page-form" class="w-full md:w-1/3">
+                            <div class="card bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+                                <h2 id="form-title" class="text-xl font-semibold mb-4">Tambah Produk Baru</h2>
+                                <form id="productForm" class="grid grid-cols-1 gap-4">
+                                    <input type="hidden" id="productId">
+                                    <input type="text" id="productName" placeholder="Nama Produk" required class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="number" id="quantity" placeholder="Quantity" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="date" id="expiryDate" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <input type="number" id="price" placeholder="Harga" required class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <select id="category" required class="p-3 bg-slate-100 dark:bg-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="Rokok">Rokok</option>
+                                        <option value="Sembako">Sembako</option>
+                                        <option value="Cemilan">Cemilan</option>
+                                        <option value="Minuman">Minuman</option>
+                                    </select>
+                                    <button type="submit" class="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        <span>Simpan Produk</span>
+                                    </button>
+                                     <button type="button" id="cancel-edit-btn" class="hidden text-center w-full bg-slate-200 dark:bg-slate-600 py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500">Batal Edit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700">
+        <div class="flex justify-around max-w-5xl mx-auto">
+            <button data-page="list-section" class="nav-btn flex-1 flex flex-col items-center justify-center p-3 text-indigo-600 dark:text-indigo-400">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                <span class="text-xs font-medium">Stok</span>
+            </button>
+            <button data-page="page-form" class="nav-btn flex-1 flex flex-col items-center justify-center p-3 text-slate-500 dark:text-slate-400">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                <span class="text-xs font-medium">Tambah</span>
+            </button>
+        </div>
+    </nav>
+    
+    <div id="messageBox" class="fixed top-5 right-5 z-50 w-full max-w-sm"></div>
+    <script src="script.js"></script>
+</body>
+</html>
