@@ -3,6 +3,7 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
 const darkIcon = themeToggleBtn.querySelector('#theme-toggle-dark-icon');
 const lightIcon = themeToggleBtn.querySelector('#theme-toggle-light-icon');
+
 themeToggleMobileBtn.innerHTML = darkIcon.outerHTML + lightIcon.outerHTML;
 
 function toggleIconsUI(isDarkMode) {
@@ -11,15 +12,19 @@ function toggleIconsUI(isDarkMode) {
     themeToggleMobileBtn.querySelector('#theme-toggle-dark-icon').classList.toggle('hidden', !isDarkMode);
     themeToggleMobileBtn.querySelector('#theme-toggle-light-icon').classList.toggle('hidden', isDarkMode);
 }
+
 function setTheme(isDarkMode) {
     localStorage.setItem('color-theme', isDarkMode ? 'dark' : 'light');
     document.documentElement.classList.toggle('dark', isDarkMode);
     toggleIconsUI(isDarkMode);
 }
+
 const toggleTheme = () => setTheme(!document.documentElement.classList.contains('dark'));
 themeToggleBtn.addEventListener('click', toggleTheme);
 themeToggleMobileBtn.addEventListener('click', toggleTheme);
-const initialTheme = localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+const initialTheme = localStorage.getItem('color-theme') === 'dark' || 
+    (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
 setTheme(initialTheme);
 
 
@@ -28,13 +33,23 @@ const mobileNavButtons = document.querySelectorAll('.nav-btn');
 const listSection = document.querySelector('.w-full.md\\:w-2\\/3');
 const formSection = document.getElementById('page-form');
 const pageTitle = document.getElementById('page-title');
-const pageTitles = { 'list-section': 'Daftar Stok', 'page-form': 'Tambah Produk' };
+
+const pageTitles = {
+    'list-section': 'Daftar Stok',
+    'page-form': 'Tambah Produk',
+};
 
 function showMobilePage(pageId) {
-    if (window.innerWidth >= 768) return;
+    const isDesktop = window.innerWidth >= 768;
+    if (isDesktop) return; // Di desktop, jangan lakukan apa-apa
+
+    // Sembunyikan semua section utama, lalu tampilkan yang dituju
     listSection.classList.toggle('hidden', pageId !== 'list-section');
     formSection.classList.toggle('hidden', pageId !== 'page-form');
+    
     pageTitle.textContent = pageTitles[pageId] || 'Stok Toko';
+    
+    // Atur style tombol navigasi yang aktif
     mobileNavButtons.forEach(btn => {
         const isTargetButton = btn.dataset.page === pageId;
         btn.classList.toggle('text-indigo-600', isTargetButton);
@@ -47,29 +62,12 @@ function showMobilePage(pageId) {
 mobileNavButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         e.preventDefault();
+        // Saat tombol tambah diklik, pastikan form direset jika bukan mode edit
         if (button.dataset.page === 'page-form' && document.getElementById('productId').value === '') {
-            resetForm();
+             resetForm();
         }
         showMobilePage(button.dataset.page);
     });
-});
-
-let resizeTimer;
-window.addEventListener('resize', () => {
-    // Hapus timer sebelumnya agar tidak menumpuk
-    clearTimeout(resizeTimer);
-    // Set timer baru. Fungsi hanya akan jalan jika tidak ada resize selama 150ms.
-    resizeTimer = setTimeout(() => {
-        const isDesktop = window.innerWidth >= 768;
-        if (isDesktop) {
-            // Jika menjadi desktop, pastikan kedua section terlihat
-            listSection.classList.remove('hidden');
-            formSection.classList.remove('hidden');
-        } else {
-            // Jika menjadi mobile, default ke halaman daftar stok
-            showMobilePage('list-section');
-        }
-    }, 150);
 });
 
 
@@ -77,21 +75,25 @@ window.addEventListener('resize', () => {
 const productForm = document.getElementById("productForm");
 const formTitle = document.getElementById('form-title');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
+
 function resetForm() {
     productForm.reset();
     document.getElementById('productId').value = '';
     formTitle.textContent = 'Tambah Produk Baru';
     cancelEditBtn.classList.add('hidden');
 }
+
 cancelEditBtn.addEventListener('click', () => {
     resetForm();
     if (window.innerWidth < 768) {
         showMobilePage('list-section');
     }
 });
+
 function editProduct(productId) {
     const products = JSON.parse(localStorage.getItem("products") || '[]');
     const product = products.find(p => p.id == productId);
+
     if (product) {
         document.getElementById('productId').value = product.id;
         document.getElementById('productName').value = product.name;
@@ -99,8 +101,10 @@ function editProduct(productId) {
         document.getElementById('price').value = product.price;
         document.getElementById('category').value = product.category;
         document.getElementById('expiryDate').value = product.expiryDate || '';
+
         formTitle.textContent = 'Edit Produk';
         cancelEditBtn.classList.remove('hidden');
+        
         if (window.innerWidth < 768) {
             showMobilePage('page-form');
         } else {
@@ -108,9 +112,11 @@ function editProduct(productId) {
         }
     }
 }
+
 productForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const productId = document.getElementById('productId').value;
+    
     const productData = {
         id: productId || Date.now().toString(),
         name: document.getElementById('productName').value.trim(),
@@ -119,21 +125,27 @@ productForm.addEventListener("submit", function (event) {
         price: document.getElementById('price').value.trim(),
         category: document.getElementById("category").value.trim(),
     };
+
     if (!productData.name || !productData.price || !productData.category) {
         showMessage("Nama, harga, dan kategori wajib diisi!", "error");
         return;
     }
+
     saveProduct(productData);
     showMessage(productId ? "Produk berhasil diperbarui!" : "Produk berhasil ditambahkan!", "success");
+    
     resetForm();
     loadAndRenderTable();
+    
     if (window.innerWidth < 768) {
         showMobilePage('list-section');
     }
 });
+
 function saveProduct(productData) {
     let products = JSON.parse(localStorage.getItem("products") || '[]');
     const existingIndex = products.findIndex(p => p.id == productData.id);
+
     if (existingIndex > -1) {
         products[existingIndex] = productData;
     } else {
@@ -141,6 +153,7 @@ function saveProduct(productData) {
     }
     localStorage.setItem("products", JSON.stringify(products));
 }
+
 function loadAndRenderTable() {
     const tableBody = document.getElementById("productTableBody");
     tableBody.innerHTML = '';
@@ -149,6 +162,7 @@ function loadAndRenderTable() {
         const newRow = tableBody.insertRow();
         newRow.className = "border-b border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/50";
         newRow.dataset.id = product.id;
+
         newRow.innerHTML = `
             <td class="p-4">
                 <div class="font-medium text-slate-900 dark:text-white">${product.name}</div>
@@ -160,10 +174,12 @@ function loadAndRenderTable() {
                 <button class="edit-btn p-1 text-slate-500 hover:text-blue-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg></button>
                 <button class="delete-btn p-1 text-slate-500 hover:text-red-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
             </td>`;
+
         newRow.querySelector('.edit-btn').onclick = () => editProduct(newRow.dataset.id);
         newRow.querySelector('.delete-btn').onclick = () => deleteProduct(newRow.dataset.id);
     });
 }
+
 function deleteProduct(productId) {
     if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
         let products = JSON.parse(localStorage.getItem("products") || '[]');
@@ -173,6 +189,7 @@ function deleteProduct(productId) {
         showMessage("Produk berhasil dihapus!", "success");
     }
 }
+
 function searchProducts() {
     const filter = document.getElementById("searchInput").value.toLowerCase();
     const selectedCategory = document.getElementById("filterCategory").value;
@@ -183,6 +200,7 @@ function searchProducts() {
     });
 }
 document.getElementById("filterCategory").addEventListener("change", searchProducts);
+
 function showMessage(message, type) {
     const messageBox = document.createElement('div');
     let typeClasses = '', icon = '';
@@ -202,10 +220,12 @@ function showMessage(message, type) {
         setTimeout(() => messageBox.remove(), 500);
     }, 3000);
 }
+
 const importBtn = document.getElementById('importBtn');
 const fileInput = document.getElementById('fileInput');
 importBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', handleFile);
+
 function handleFile(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -241,8 +261,11 @@ function handleFile(event) {
     reader.readAsArrayBuffer(file);
     event.target.value = '';
 }
+
+// Inisialisasi awal
 window.onload = () => {
     loadAndRenderTable();
+    // Atur halaman default untuk mobile
     if (window.innerWidth < 768) {
         showMobilePage('list-section');
     }
