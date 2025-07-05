@@ -229,6 +229,7 @@ fileInput.addEventListener('change', handleFile);
 function handleFile(event) {
     const file = event.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
@@ -236,29 +237,51 @@ function handleFile(event) {
             const workbook = XLSX.read(data, { type: 'array' });
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const products = XLSX.utils.sheet_to_json(worksheet);
+
             if (products.length === 0) {
-                showMessage("File Excel kosong atau format tidak sesuai.", "error"); return;
+                showMessage("File Excel kosong atau format tidak sesuai.", "error");
+                return;
             }
+
+            let importedCount = 0;
             products.forEach(product => {
+                // SOLUSI: Membuat pencocokan nama kolom yang lebih fleksibel
+                // Kode ini akan mencoba berbagai kemungkinan nama kolom
                 const newProduct = {
                     id: Date.now().toString() + Math.random(),
-                    name: product['Nama Produk'] || product.name,
-                    quantity: product.Quantity || product.quantity || 0,
-                    price: product.Harga || product.price || 0,
-                    category: product.Kategori || product.category,
+                    name: product['Nama Produk'] || product['NAMA ROKOK'] || product.name,
+                    quantity: product.Quantity || product.quantity || product.Jumlah || product.jumlah,
+                    price: product.Harga || product.harga,
+                    category: product.Kategori || product.kategori || 'Rokok', // Default ke 'Rokok' jika tidak ada
                     expiryDate: product['Tanggal Kadaluwarsa'] || product.expiryDate || ''
                 };
-                if (newProduct.name && newProduct.category) {
+
+                // Validasi: hanya impor jika ada nama dan harga
+                if (newProduct.name && newProduct.price) {
                     saveProduct(newProduct);
+                    importedCount++;
                 }
             });
-            loadAndRenderTable();
-            showMessage(`${products.length} produk berhasil diimpor!`, 'success');
+
+            if (importedCount > 0) {
+                loadAndRenderTable();
+                showMessage(`${importedCount} produk berhasil diimpor!`, 'success');
+            } else {
+                showMessage("Tidak ada data yang cocok untuk diimpor. Periksa nama kolom di file Excel Anda.", "error");
+            }
+
         } catch (error) {
-            showMessage("Gagal memproses file Excel.", "error");
+            showMessage("Gagal memproses file Excel. Pastikan format file benar.", "error");
+            console.error("Import Error:", error);
         }
     };
+
+    reader.onerror = function() {
+        showMessage("Gagal membaca file.", "error");
+    };
+
     reader.readAsArrayBuffer(file);
+    // Reset input file agar bisa memilih file yang sama lagi
     event.target.value = '';
 }
 
