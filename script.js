@@ -87,12 +87,11 @@ cancelEditBtn.addEventListener('click', () => {
     }
 });
 
-// <-- Fungsi baru untuk hapus semua -->
+// <-- hapus semua -->
 deleteAllBtn.addEventListener('click', () => {
-    // Tampilkan konfirmasi yang sangat penting!
     if (confirm("Anda yakin ingin menghapus semua data produk? Aksi ini tidak bisa dibatalkan.")) {
-        localStorage.removeItem('products'); // Hapus data dari penyimpanan
-        loadAndRenderTable(); // Render ulang tabel (akan menjadi kosong)
+        localStorage.removeItem('products'); 
+        loadAndRenderTable();
         showMessage("Semua data produk telah berhasil dihapus.", "success");
     }
 });
@@ -115,8 +114,6 @@ function editProduct(productId) {
         
         if (window.innerWidth < 768) {
             showMobilePage('page-form');
-        } else {
-            formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 }
@@ -179,8 +176,12 @@ function loadAndRenderTable() {
             <td class="p-4 text-center">${product.quantity}</td>
             <td class="p-4 text-center">Rp ${new Intl.NumberFormat('id-ID').format(product.price || 0)}</td>
             <td class="p-4 text-center space-x-2">
-                <button class="edit-btn p-1 text-slate-500 hover:text-blue-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg></button>
-                <button class="delete-btn p-1 text-slate-500 hover:text-red-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                <button class="edit-btn p-1 text-slate-500 hover:text-blue-500">
+                    <span class="material-icons text-xl">edit</span>
+                </button>
+                <button class="delete-btn p-1 text-slate-500 hover:text-red-500">
+                    <span class="material-icons text-xl">delete</span>
+                </button>
             </td>`;
 
         newRow.querySelector('.edit-btn').onclick = () => editProduct(newRow.dataset.id);
@@ -247,7 +248,6 @@ function handleFile(event) {
             let totalImportedCount = 0;
             let totalSkippedCount = 0;
 
-            // SOLUSI UTAMA: Looping melalui SETIAP sheet di dalam file Excel
             workbook.SheetNames.forEach(sheetName => {
                 const worksheet = workbook.Sheets[sheetName];
                 const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
