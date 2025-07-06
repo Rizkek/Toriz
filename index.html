@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -26,6 +28,7 @@
     
     <style>
         body, .card { transition: background-color 0.3s ease, color 0.3s ease; }
+        .material-icons { font-size: inherit; vertical-align: bottom; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200">
@@ -37,14 +40,14 @@
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2">
                 <a href="#" class="desktop-nav-btn flex items-center p-3 text-base font-normal rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                    <span class="ml-3">Daftar Stok</span>
+                    <span class="material-icons mr-3">list</span>
+                    <span>Daftar Stok</span>
                 </a>
             </nav>
             <div class="p-4 border-t dark:border-slate-700">
-                 <button id="theme-toggle" class="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                    <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                    <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <button id="theme-toggle" class="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <span id="theme-toggle-dark-icon" class="material-icons hidden">dark_mode</span>
+                    <span id="theme-toggle-light-icon" class="material-icons hidden">light_mode</span>
                     <span class="ml-2">Ganti Tema</span>
                 </button>
             </div>
@@ -54,8 +57,7 @@
             <header class="md:hidden sticky top-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg shadow-sm">
                 <div class="container mx-auto flex justify-between items-center p-4">
                     <h1 id="page-title" class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Daftar Stok</h1>
-                    <button id="theme-toggle-mobile" class="p-2 rounded-full text-slate-500 dark:text-slate-400">
-                        </button>
+                    <button id="theme-toggle-mobile" class="p-2 rounded-full text-slate-500 dark:text-slate-400"></button>
                 </div>
             </header>
             
@@ -74,11 +76,11 @@
                                         <option value="Minuman">Minuman</option>
                                     </select>
                                     <button id="importBtn" class="flex-shrink-0 flex items-center justify-center gap-2 bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                        <span class="material-icons text-xl">file_upload</span>
                                         <span>Impor</span>
                                     </button>
                                     <button id="deleteAllBtn" class="flex-shrink-0 flex items-center justify-center gap-2 bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition-colors">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        <span class="material-icons text-xl">delete_sweep</span>
                                         <span>Hapus Semua</span>
                                     </button>
                                     <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden">
@@ -117,7 +119,7 @@
                                         <option value="Minuman">Minuman</option>
                                     </select>
                                     <button type="submit" class="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        <span class="material-icons">save</span>
                                         <span>Simpan Produk</span>
                                     </button>
                                     <button type="button" id="cancel-edit-btn" class="hidden text-center w-full bg-slate-200 dark:bg-slate-600 py-3 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500">Batal Edit</button>
@@ -133,11 +135,11 @@
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700">
         <div class="flex justify-around max-w-5xl mx-auto">
             <button data-page="list-section" class="nav-btn flex-1 flex flex-col items-center justify-center p-3 text-indigo-600 dark:text-indigo-400">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                <span class="material-icons">list</span>
                 <span class="text-xs font-medium">Stok</span>
             </button>
             <button data-page="page-form" class="nav-btn flex-1 flex flex-col items-center justify-center p-3 text-slate-500 dark:text-slate-400">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                <span class="material-icons">add_box</span>
                 <span class="text-xs font-medium">Tambah</span>
             </button>
         </div>
