@@ -41,15 +41,13 @@ const pageTitles = {
 
 function showMobilePage(pageId) {
     const isDesktop = window.innerWidth >= 768;
-    if (isDesktop) return; // Di desktop, jangan lakukan apa-apa
+    if (isDesktop) return;
 
-    // Sembunyikan semua section utama, lalu tampilkan yang dituju
     listSection.classList.toggle('hidden', pageId !== 'list-section');
     formSection.classList.toggle('hidden', pageId !== 'page-form');
     
     pageTitle.textContent = pageTitles[pageId] || 'Stok Toko';
     
-    // Atur style tombol navigasi yang aktif
     mobileNavButtons.forEach(btn => {
         const isTargetButton = btn.dataset.page === pageId;
         btn.classList.toggle('text-indigo-600', isTargetButton);
@@ -62,9 +60,8 @@ function showMobilePage(pageId) {
 mobileNavButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         e.preventDefault();
-        // Saat tombol tambah diklik, pastikan form direset jika bukan mode edit
         if (button.dataset.page === 'page-form' && document.getElementById('productId').value === '') {
-             resetForm();
+            resetForm();
         }
         showMobilePage(button.dataset.page);
     });
@@ -75,6 +72,7 @@ mobileNavButtons.forEach(button => {
 const productForm = document.getElementById("productForm");
 const formTitle = document.getElementById('form-title');
 const cancelEditBtn = document.getElementById('cancel-edit-btn');
+const deleteAllBtn = document.getElementById('deleteAllBtn'); // <-- Ambil tombol baru
 
 function resetForm() {
     productForm.reset();
@@ -82,13 +80,23 @@ function resetForm() {
     formTitle.textContent = 'Tambah Produk Baru';
     cancelEditBtn.classList.add('hidden');
 }
-
 cancelEditBtn.addEventListener('click', () => {
     resetForm();
     if (window.innerWidth < 768) {
         showMobilePage('list-section');
     }
 });
+
+// <-- Fungsi baru untuk hapus semua -->
+deleteAllBtn.addEventListener('click', () => {
+    // Tampilkan konfirmasi yang sangat penting!
+    if (confirm("Anda yakin ingin menghapus semua data produk? Aksi ini tidak bisa dibatalkan.")) {
+        localStorage.removeItem('products'); // Hapus data dari penyimpanan
+        loadAndRenderTable(); // Render ulang tabel (akan menjadi kosong)
+        showMessage("Semua data produk telah berhasil dihapus.", "success");
+    }
+});
+
 
 function editProduct(productId) {
     const products = JSON.parse(localStorage.getItem("products") || '[]');
@@ -186,7 +194,7 @@ function deleteProduct(productId) {
         products = products.filter(p => p.id != productId);
         localStorage.setItem("products", JSON.stringify(products));
         loadAndRenderTable();
-        showMessage("Produk berhasil dihapus!", "success");
+        showMessage("Produk berhasil dihapus.", "success");
     }
 }
 
@@ -235,43 +243,56 @@ function handleFile(event) {
         try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const products = XLSX.utils.sheet_to_json(worksheet);
 
-            if (products.length === 0) {
-                showMessage("File Excel kosong atau format tidak sesuai.", "error");
-                return;
-            }
+            let totalImportedCount = 0;
+            let totalSkippedCount = 0;
 
-            let importedCount = 0;
-            products.forEach(product => {
-                // SOLUSI: Membuat pencocokan nama kolom yang lebih fleksibel
-                // Kode ini akan mencoba berbagai kemungkinan nama kolom
-                const newProduct = {
-                    id: Date.now().toString() + Math.random(),
-                    name: product['Nama Produk'] || product['NAMA ROKOK'] || product.name,
-                    quantity: product.Quantity || product.quantity || product.Jumlah || product.jumlah,
-                    price: product.Harga || product.harga,
-                    category: product.Kategori || product.kategori || 'Rokok', // Default ke 'Rokok' jika tidak ada
-                    expiryDate: product['Tanggal Kadaluwarsa'] || product.expiryDate || ''
-                };
+            // SOLUSI UTAMA: Looping melalui SETIAP sheet di dalam file Excel
+            workbook.SheetNames.forEach(sheetName => {
+                const worksheet = workbook.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                // Validasi: hanya impor jika ada nama dan harga
-                if (newProduct.name && newProduct.price) {
-                    saveProduct(newProduct);
-                    importedCount++;
+                if (rows.length === 0) {
+                    return; // Lewati sheet yang kosong
                 }
+
+                rows.forEach(row => {
+                    if (!row || row.length === 0) {
+                        totalSkippedCount++;
+                        return; // Lewati baris yang kosong
+                    }
+
+                    const productName = row[0]; // Kolom pertama selalu Nama Produk
+
+                    // Validasi hanya berdasarkan nama produk
+                    if (productName && productName.toString().trim() !== '') {
+                        const productPrice = row[1]; // Kolom kedua selalu Harga
+
+                        const newProduct = {
+                            id: Date.now().toString() + Math.random(),
+                            name: productName,
+                            quantity: 10, // Default quantity
+                            price: productPrice || 0, // Jika harga kosong, isi 0
+                            category: 'Rokok', // Default kategori
+                            expiryDate: ''
+                        };
+                        saveProduct(newProduct);
+                        totalImportedCount++;
+                    } else {
+                        totalSkippedCount++;
+                    }
+                });
             });
 
-            if (importedCount > 0) {
+            if (totalImportedCount > 0) {
                 loadAndRenderTable();
-                showMessage(`${importedCount} produk berhasil diimpor!`, 'success');
+                showMessage(`${totalImportedCount} produk berhasil diimpor dari semua sheet.`, 'success');
             } else {
-                showMessage("Tidak ada data yang cocok untuk diimpor. Periksa nama kolom di file Excel Anda.", "error");
+                showMessage("Impor gagal. Tidak ada data valid yang ditemukan di semua sheet.", "error");
             }
 
         } catch (error) {
-            showMessage("Gagal memproses file Excel. Pastikan format file benar.", "error");
+            showMessage("Gagal memproses file Excel. Format mungkin tidak didukung.", "error");
             console.error("Import Error:", error);
         }
     };
@@ -281,14 +302,12 @@ function handleFile(event) {
     };
 
     reader.readAsArrayBuffer(file);
-    // Reset input file agar bisa memilih file yang sama lagi
     event.target.value = '';
 }
 
 // Inisialisasi awal
 window.onload = () => {
     loadAndRenderTable();
-    // Atur halaman default untuk mobile
     if (window.innerWidth < 768) {
         showMobilePage('list-section');
     }
