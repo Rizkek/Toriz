@@ -17,72 +17,42 @@ class ReportController extends Controller
             ->when($request->product_id, fn($q) => $q->where('product_id', $request->product_id))
             ->latest('transaction_date');
 
-        $transactions = $query->get();
-        $products = Product::active()->get();
+        $transactions = $query->paginate(20); // Add pagination
+        $products = Product::active()->orderBy('name')->get();
 
-        return view('reports.stock-movement', compact('transactions', 'products'));
+        // Calculate Daily Movements for Chart
+        $dailyMovements = StockTransaction::selectRaw('DATE(transaction_date) as date')
+            ->selectRaw("SUM(CASE WHEN type = 'in' THEN quantity ELSE 0 END) as stock_in")
+            ->selectRaw("SUM(CASE WHEN type = 'out' THEN ABS(quantity) ELSE 0 END) as stock_out")
+            ->where('transaction_date', '>=', now()->subDays(30))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        return view('reports.movement', compact('transactions', 'products', 'dailyMovements'));
     }
 
     public function lowStock()
     {
-        $lowStockProducts = Product::active()
+        $products = Product::active()
             ->lowStock()
             ->with(['category', 'supplier'])
-            ->get()
-            ->map(function ($product) {
-                $product->stock_percentage = $product->min_stock > 0
-                    ? ($product->current_stock / $product->min_stock) * 100
-                    : 0;
-                return $product;
-            });
+            ->get();
 
-        return view('reports.low-stock', compact('lowStockProducts'));
+        return view('reports.low_stock', compact('products'));
     }
 
     public function expiry(Request $request)
     {
         $days = $request->input('days', 30);
 
-        $expiringProducts = Product::active()
+        $products = Product::active()
             ->expiringSoon($days)
             ->with(['category', 'supplier'])
             ->orderBy('expiry_date')
             ->get();
 
-        $expiredProducts = Product::active()
-            ->expired()
-            ->with(['category', 'supplier'])
-            ->get();
-
-        return view('reports.expiry', compact('expiringProducts', 'expiredProducts', 'days'));
-    }
-
-    public function productPerformance(Request $request)
-    {
-        $dateFrom = $request->input('date_from', now()->subDays(30));
-        $dateTo = $request->input('date_to', now());
-
-        // Top selling products (most stock out)
-        $topProducts = StockTransaction::select('product_id')
-            ->selectRaw('SUM(ABS(quantity)) as total_sold')
-            ->where('type', 'out')
-            ->whereBetween('transaction_date', [$dateFrom, $dateTo])
-            ->groupBy('product_id')
-            ->orderByDesc('total_sold')
-            ->limit(10)
-            ->with('product.category')
-            ->get();
-
-        // Slow moving products (low turnover)
-        $slowMovingProducts = Product::active()
-            ->whereDoesntHave('stockTransactions', function ($q) use ($dateFrom, $dateTo) {
-                $q->where('type', 'out')
-                    ->whereBetween('transaction_date', [$dateFrom, $dateTo]);
-            })
-            ->with('category')
-            ->get();
-
-        return view('reports.product-performance', compact('topProducts', 'slowMovingProducts', 'dateFrom', 'dateTo'));
+        return view('reports.expiry', compact('products', 'days'));
     }
 
     public function stockValue()
@@ -90,15 +60,23 @@ class ReportController extends Controller
         $totalValue = Product::active()
             ->sum(DB::raw('current_stock * cost_price'));
 
-        $valueByCategory = Product::active()
-            ->select('categories.name as category_name')
-            ->selectRaw('SUM(products.current_stock * products.cost_price) as total_value')
-            ->selectRaw('SUM(products.current_stock) as total_qty')
+        $potentialValue = Product::active()
+            ->sum(DB::raw('current_stock * price'));
+
+        $valueByCategory = Product::query()
             ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->select(
+                'categories.name',
+                DB::raw('COUNT(products.id) as products_count'),
+                DB::raw('SUM(products.current_stock) as total_items'),
+                DB::raw('SUM(products.current_stock * products.cost_price) as total_value')
+            )
+            ->where('products.is_active', 1)
+            ->whereNull('products.deleted_at')
             ->groupBy('categories.id', 'categories.name')
             ->orderByDesc('total_value')
             ->get();
 
-        return view('reports.stock-value', compact('totalValue', 'valueByCategory'));
+        return view('reports.value', compact('totalValue', 'potentialValue', 'valueByCategory'));
     }
 }

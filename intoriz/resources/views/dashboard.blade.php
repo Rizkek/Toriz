@@ -120,7 +120,7 @@
                             <div class="flex items-center space-x-3 flex-1 min-w-0">
                                 <div
                                     class="w-10 h-10 rounded-lg flex items-center justify-center
-                                        {{ $transaction->type === 'in' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' }}">
+                                                {{ $transaction->type === 'in' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' }}">
                                     <span class="material-icons text-xl">
                                         {{ $transaction->type === 'in' ? 'add' : 'remove' }}
                                     </span>
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                             <span class="ml-4 text-sm font-semibold 
-                                    {{ $transaction->type === 'in' ? 'text-green-400' : 'text-red-400' }}">
+                                            {{ $transaction->type === 'in' ? 'text-green-400' : 'text-red-400' }}">
                                 {{ $transaction->type === 'in' ? '+' : '' }}{{ $transaction->quantity }}
                             </span>
                         </div>

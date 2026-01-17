@@ -1,111 +1,202 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') - Toriz Inventory</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
         .glass-effect {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        [x-cloak] { display: none !important; }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Navigation Links */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            border-radius: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 2px 4px -1px rgba(99, 102, 241, 0.06);
+        }
+
+        .nav-link .material-icons {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        /* Light Mode Navigation */
+        .light .nav-link {
+            color: #64748b;
+        }
+
+        .light .nav-link:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .light .nav-link.active {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-gray-100 min-h-screen">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
-        
+
+
+<body x-data="{ 
+        sidebarOpen: false,
+        darkMode: localStorage.getItem('theme') === 'dark' || !localStorage.getItem('theme')
+    }" x-init="$watch('darkMode', value => localStorage.setItem('theme', value ? 'dark' : 'light'))"
+    :class="darkMode ? 'dark bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900' : 'bg-gray-50'"
+    class="text-gray-100 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+
         <!-- Mobile Sidebar Overlay -->
-        <div x-show="sidebarOpen" 
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="sidebarOpen = false"
-             class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 md:hidden"
-             x-cloak>
+        <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" @click="sidebarOpen = false"
+            class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 md:hidden" x-cloak>
         </div>
 
         <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-               class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900/95 backdrop-blur-xl border-r border-slate-700/50 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:bg-slate-900/50 flex flex-col">
-            
+            class="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 flex flex-col"
+            :class="darkMode ? 'bg-slate-900/95 backdrop-blur-xl border-r border-slate-700/50 md:bg-slate-900/50' : 'bg-white border-r border-gray-200 shadow-xl'">
+
             <!-- Logo -->
-            <div class="flex items-center justify-between h-16 px-6 border-b border-slate-700/50">
+            <div class="flex items-center justify-between h-16 px-6"
+                :class="darkMode ? 'border-b border-slate-700/50' : 'border-b border-gray-200'">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                         <span class="material-icons text-white">inventory</span>
                     </div>
-                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                    <span
+                        class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                         Toriz
                     </span>
                 </div>
                 <!-- Close Button (Mobile Only) -->
-                <button @click="sidebarOpen = false" class="md:hidden text-gray-400 hover:text-white">
+                <button @click="sidebarOpen = false" class="md:hidden"
+                    :class="darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'">
                     <span class="material-icons">close</span>
                 </button>
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
-                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <span class="material-icons">dashboard</span>
+            <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+                <a href="{{ route('dashboard') }}"
+                    class="nav-link group {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('dashboard') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                
-                <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                    <span class="material-icons">inventory_2</span>
+
+                <a href="{{ route('products.index') }}"
+                    class="nav-link group {{ request()->routeIs('products.*') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('products.*') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">inventory_2</span>
                     <span>Products</span>
                 </a>
-                
-                <a href="{{ route('stock.transactions') }}" class="nav-link {{ request()->routeIs('stock.*') ? 'active' : '' }}">
-                    <span class="material-icons">swap_horiz</span>
+
+                <a href="{{ route('stock.transactions') }}"
+                    class="nav-link group {{ request()->routeIs('stock.*') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('stock.*') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">swap_horiz</span>
                     <span>Transactions</span>
                 </a>
 
-                <div class="pt-6 pb-2">
-                    <p class="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Reports</p>
-                </div>
+                <div class="my-2" :class="darkMode ? 'border-t border-slate-700/50' : 'border-t border-gray-200'"></div>
 
-                <a href="{{ route('reports.low-stock') }}" class="nav-link {{ request()->routeIs('reports.low-stock') ? 'active' : '' }}">
-                    <span class="material-icons">warning</span>
+                <a href="{{ route('reports.stock-value') }}"
+                    class="nav-link group {{ request()->routeIs('reports.stock-value') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('reports.stock-value') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">attach_money</span>
+                    <span>Stock Value</span>
+                </a>
+
+                <a href="{{ route('reports.low-stock') }}"
+                    class="nav-link group {{ request()->routeIs('reports.low-stock') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('reports.low-stock') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">warning</span>
                     <span>Low Stock</span>
                 </a>
-                
-                <a href="{{ route('reports.stock-movement') }}" class="nav-link {{ request()->routeIs('reports.stock-movement') ? 'active' : '' }}">
-                    <span class="material-icons">timeline</span>
+
+                <a href="{{ route('reports.stock-movement') }}"
+                    class="nav-link group {{ request()->routeIs('reports.stock-movement') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('reports.stock-movement') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">timeline</span>
                     <span>Movement</span>
                 </a>
-                
-                <a href="{{ route('reports.expiry') }}" class="nav-link {{ request()->routeIs('reports.expiry') ? 'active' : '' }}">
-                    <span class="material-icons">event_busy</span>
+
+                <a href="{{ route('reports.expiry') }}"
+                    class="nav-link group {{ request()->routeIs('reports.expiry') ? 'active' : '' }}"
+                    :class="darkMode ? '' : (!{{ request()->routeIs('reports.expiry') ? 'true' : 'false' }} && 'text-gray-600 hover:bg-gray-100')">
+                    <span class="material-icons group-hover:scale-110 transition-transform">event_busy</span>
                     <span>Expiry</span>
-                </a>
-                
-                <a href="{{ route('reports.stock-value') }}" class="nav-link {{ request()->routeIs('reports.stock-value') ? 'active' : '' }}">
-                    <span class="material-icons">attach_money</span>
-                    <span>Stock Value</span>
                 </a>
             </nav>
 
             <!-- User Profile -->
-            <div class="p-4 border-t border-slate-700/50 bg-slate-800/20">
-                <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer group">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <div class="p-4"
+                :class="darkMode ? 'border-t border-slate-700/50 bg-slate-800/20' : 'border-t border-gray-200 bg-gray-50'">
+                <div
+                    class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-700/50 transition-colors cursor-pointer group">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                         <span class="text-sm font-bold text-white">A</span>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -120,9 +211,11 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden relative">
             <!-- Top Bar -->
-            <header class="h-16 bg-slate-900/30 backdrop-blur-xl border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-6">
+            <header
+                class="h-16 bg-slate-900/30 backdrop-blur-xl border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-6">
                 <div class="flex items-center">
-                    <button @click="sidebarOpen = true" class="md:hidden p-2 -ml-2 mr-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700/50">
+                    <button @click="sidebarOpen = true"
+                        class="md:hidden p-2 -ml-2 mr-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-700/50">
                         <span class="material-icons">menu</span>
                     </button>
                     <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
@@ -131,107 +224,51 @@
                 </div>
 
                 <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Theme Toggle -->
+                    <button @click="darkMode = !darkMode" class="p-2 rounded-lg transition-all"
+                        :class="darkMode ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                        title="Toggle theme">
+                        <span class="material-icons text-xl" x-show="darkMode">light_mode</span>
+                        <span class="material-icons text-xl" x-show="!darkMode" x-cloak>dark_mode</span>
+                    </button>
+
                     <!-- Search -->
                     <div class="hidden md:block">
                         <div class="relative">
-                            <input type="search" placeholder="Search..." class="pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-sm w-64 transition-all">
-                            <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-lg">search</span>
+                            <input type="text" placeholder="Search..."
+                                class="w-64 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-sm">
+                            <span class="material-icons absolute right-3 top-1.5 text-gray-400 text-sm">search</span>
                         </div>
                     </div>
 
                     <!-- Notifications -->
-                    <button class="relative p-2 rounded-xl text-gray-400 hover:text-white hover:bg-slate-700/50 transition-colors">
-                        <span class="material-icons">notifications</span>
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-slate-900"></span>
-                    </button>
+                    <div class="relative" x-data="{ notifOpen: false }">
+                        <button @click="notifOpen = !notifOpen"
+                            class="relative p-2 text-gray-400 hover:text-white transition-colors">
+                            <span class="material-icons">notifications</span>
+                            @if(isset($notifications) && $notifications['count'] > 0)
+                                <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            @endif
+                        </button>
+                    </div>
 
-                    <!-- Theme Toggle -->
-                    {{-- <button id="theme-toggle" class="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-slate-700/50 transition-colors">
-                        <span class="material-icons">light_mode</span>
-                    </button> --}}
+                    <!-- Profile -->
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center">
+                        <span class="material-icons text-sm text-gray-300">person</span>
+                    </div>
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 pb-24 md:pb-6 custom-scrollbar">
-                @if(session('success'))
-                    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" 
-                         class="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center backdrop-blur-sm">
-                        <div class="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mr-3">
-                            <span class="material-icons text-green-400 text-sm">check</span>
-                        </div>
-                        <span class="text-green-100 font-medium">{{ session('success') }}</span>
-                    </div>
-                @endif
-
+            <!-- Content Scroll Area -->
+            <main class="flex-1 overflow-y-auto px-4 py-6 sm:px-6 custom-scrollbar">
                 @yield('content')
             </main>
         </div>
     </div>
 
-    <!-- Mobile Bottom Navigation (Optional - kept for quick access) -->
-    <nav class="md:hidden fixed bottom-4 left-4 right-4 z-40 bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl shadow-black/50">
-        <div class="flex justify-around items-center h-16 px-2">
-            <a href="{{ route('dashboard') }}" class="mobile-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <span class="material-icons text-2xl mb-0.5">dashboard</span>
-            </a>
-            <a href="{{ route('products.index') }}" class="mobile-nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">
-                <span class="material-icons text-2xl mb-0.5">inventory_2</span>
-            </a>
-            
-            <!-- Center Generic FAB for Action -->
-            <div class="relative -top-5">
-                <a href="{{ route('stock.transactions') }}" class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/50 text-white transform hover:scale-105 transition-transform">
-                    <span class="material-icons">add</span>
-                </a>
-            </div>
-
-            <a href="{{ route('stock.transactions') }}" class="mobile-nav-link {{ request()->routeIs('stock.*') ? 'active' : '' }}">
-                <span class="material-icons text-2xl mb-0.5">swap_horiz</span>
-            </a>
-            <a href="#" @click="sidebarOpen = true" class="mobile-nav-link">
-                <span class="material-icons text-2xl mb-0.5">menu</span>
-            </a>
-        </div>
-    </nav>
-
     @livewireScripts
-    
-    <style>
-        .nav-link {
-            @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200 border border-transparent;
-        }
-        .nav-link.active {
-            @apply bg-indigo-500/10 text-indigo-400 border-indigo-500/20 font-medium shadow-sm;
-        }
-        .nav-link.active .material-icons {
-            @apply text-indigo-400;
-        }
-        
-        /* Mobile Nav Link */
-        .mobile-nav-link {
-            @apply flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-indigo-400 transition-colors rounded-xl mx-1;
-        }
-        .mobile-nav-link.active {
-            @apply text-indigo-400 bg-white/5;
-        }
-
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-    </style>
-
     @stack('scripts')
 </body>
+
 </html>

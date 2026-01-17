@@ -34,7 +34,7 @@ class StockTransactionController extends Controller
 
         $products = Product::active()->get();
 
-        return view('stock-transactions.index', compact('transactions', 'products'));
+        return view('stock.index', compact('transactions', 'products'));
     }
 
     public function stockIn(Request $request)

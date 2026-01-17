@@ -43,6 +43,14 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories', 'suppliers'));
     }
 
+    public function create()
+    {
+        $categories = Category::active()->get();
+        $suppliers = Supplier::active()->get();
+
+        return view('products.create', compact('categories', 'suppliers'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
