@@ -9,3 +9,93 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/**
+ * Custom animations and utilities for inventory system
+ */
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Toast animations */
+.toast {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Modal animations */
+.modal-overlay {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Skeleton loader animation */
+.skeleton {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 1000px 100%;
+    animation: skeleton-loading 2s infinite;
+}
+
+.dark .skeleton {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 1000px 100%;
+    animation: skeleton-loading 2s infinite;
+}
+
+/* Loading spinner */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Badge styles */
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.badge-success {
+    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+}
+
+.badge-warning {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+}
+
+/* Card styles */
+.card {
+    @apply bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6;
+}

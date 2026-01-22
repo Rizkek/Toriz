@@ -1,0 +1,21 @@
+sku,name,description,quantity,unit_price,category,location
+SKU-001,Wireless Mouse,Ergonomic wireless mouse with USB receiver,150,24.99,Electronics,Warehouse A
+SKU-002,USB-C Hub,7-port USB-C hub with power delivery,75,49.99,Electronics,Warehouse A
+SKU-003,Laptop Stand,Adjustable aluminum laptop stand,200,34.99,Accessories,Warehouse B
+SKU-004,Mechanical Keyboard,RGB mechanical gaming keyboard,120,89.99,Electronics,Warehouse A
+SKU-005,Monitor Arm,Dual monitor mount VESA compatible,45,79.99,Accessories,Warehouse B
+SKU-006,Desk Lamp,LED desk lamp with USB charging,300,39.99,Lighting,Warehouse C
+SKU-007,Cable Organizer,Desktop cable management system,500,9.99,Accessories,Warehouse B
+SKU-008,Phone Stand,Premium phone stand for desk,250,15.99,Accessories,Warehouse B
+SKU-009,HDMI Cable,High-speed HDMI 2.1 cable 6ft,400,12.99,Cables,Warehouse C
+SKU-010,Power Bank,20000mAh portable charger with fast charging,80,34.99,Electronics,Warehouse A
+SKU-011,Webcam,1080p HD webcam with microphone,60,69.99,Electronics,Warehouse A
+SKU-012,USB Flash Drive,256GB USB 3.1 flash drive,30,89.99,Storage,Warehouse C
+SKU-013,External SSD,1TB portable SSD with USB-C,25,149.99,Storage,Warehouse C
+SKU-014,Headphones,Noise-canceling wireless headphones,90,199.99,Audio,Warehouse A
+SKU-015,Desk Mat,Large extended mouse pad and desk pad,180,29.99,Accessories,Warehouse B
+SKU-016,USB Hub,4-port USB 3.0 hub with power adapter,220,19.99,Electronics,Warehouse A
+SKU-017,Cooling Pad,Laptop cooling pad with dual fans,70,25.99,Accessories,Warehouse B
+SKU-018,Screen Protector,Anti-glare screen protector 24 inch,600,8.99,Accessories,Warehouse C
+SKU-019,Docking Station,USB-C docking station multiport,35,199.99,Electronics,Warehouse A
+SKU-020,Wireless Charger,Qi wireless charging pad for phones,110,34.99,Electronics,Warehouse A
