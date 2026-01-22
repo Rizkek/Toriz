@@ -5,201 +5,148 @@
 
 @section('content')
     <div class="space-y-6">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Total Products -->
-            <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between">
+        <!-- KPI Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Stock Value -->
+            <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-blue-200 text-sm font-medium">Total Products</p>
-                        <h3 class="text-3xl font-bold text-white mt-2">{{ number_format($summary['total_products']) }}</h3>
+                        <p class="text-gray-500 text-xs font-semibold tracking-wide">STOCK VALUE</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">Rp {{ number_format($summary['total_stock_value'] ?? 0) }}</h3>
                     </div>
-                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                        <span class="material-icons text-white text-3xl">inventory_2</span>
+                    <div class="p-2 bg-teal-50 rounded-lg">
+                        <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Stock Value -->
-            <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between">
+            <!-- Total Products -->
+            <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-purple-200 text-sm font-medium">Stock Value</p>
-                        <h3 class="text-3xl font-bold text-white mt-2">Rp {{ number_format($summary['total_stock_value']) }}
-                        </h3>
+                        <p class="text-gray-500 text-xs font-semibold tracking-wide">TOTAL PRODUCTS</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($summary['total_products'] ?? 0) }}</h3>
                     </div>
-                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                        <span class="material-icons text-white text-3xl">attach_money</span>
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m0 0v10l8 4M4 7L2.5 5.5" />
+                        </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Low Stock -->
-            <div class="bg-gradient-to-br from-orange-600 to-orange-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between">
+            <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-orange-200 text-sm font-medium">Low Stock</p>
-                        <h3 class="text-3xl font-bold text-white mt-2">{{ number_format($summary['low_stock_count']) }}</h3>
+                        <p class="text-gray-500 text-xs font-semibold tracking-wide">LOW STOCK</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($summary['low_stock_count'] ?? 0) }}</h3>
                     </div>
-                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                        <span class="material-icons text-white text-3xl">warning</span>
+                    <div class="p-2 bg-orange-50 rounded-lg">
+                        <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0 4v2M6.34 8.66L4.93 7.25M9 5h6M4.93 16.75l1.41 1.41M19.07 4.93l1.41 1.41M19.07 19.07l1.41 1.41" />
+                        </svg>
                     </div>
                 </div>
             </div>
 
             <!-- Out of Stock -->
-            <div class="bg-gradient-to-br from-red-600 to-red-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between">
+            <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-red-200 text-sm font-medium">Out of Stock</p>
-                        <h3 class="text-3xl font-bold text-white mt-2">{{ number_format($summary['out_of_stock_count']) }}
-                        </h3>
+                        <p class="text-gray-500 text-xs font-semibold tracking-wide">OUT OF STOCK</p>
+                        <h3 class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($summary['out_of_stock_count'] ?? 0) }}</h3>
                     </div>
-                    <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                        <span class="material-icons text-white text-3xl">remove_shopping_cart</span>
+                    <div class="p-2 bg-red-50 rounded-lg">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v2m-6-6h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z" />
+                        </svg>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Stock Movement Chart -->
-            <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white">Stock Movement (Last 7 Days)</h3>
-                    <span class="material-icons text-gray-400">timeline</span>
-                </div>
-                <div class="h-64 flex items-center justify-center">
-                    <canvas id="stockMovementChart"></canvas>
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Recent Transactions Table (60% width) -->
+            <div class="lg:col-span-2">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+                        <a href="{{ route('stock.transactions') }}" class="text-sm font-medium text-teal-600 hover:text-teal-700">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Product</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Quantity</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                @forelse($recentTransactions as $transaction)
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 text-gray-900 font-medium">{{ $transaction->product->name ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                                                {{ $transaction->type === 'in' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                {{ ucfirst($transaction->type) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-700">{{ number_format($transaction->quantity) }}</td>
+                                        <td class="px-6 py-4 text-gray-600 text-xs">{{ $transaction->created_at->format('M d, H:i') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                            <p class="text-sm">No transactions yet</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Low Stock Products -->
-            <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white">Low Stock Alert</h3>
-                    <a href="{{ route('reports.low-stock') }}"
-                        class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">View All</a>
+            <!-- Low Stock Alert Sidebar -->
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900">Low Stock Alert</h2>
                 </div>
-                <div class="space-y-3 max-h-64 overflow-y-auto">
+                <div class="divide-y divide-gray-200 max-h-96 overflow-y-auto">
                     @forelse($lowStockProducts as $product)
-                        <div
-                            class="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600/50 hover:border-orange-500/50 transition-colors">
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-white truncate">{{ $product->name }}</p>
-                                <p class="text-xs text-gray-400">{{ $product->category->name ?? 'Uncategorized' }}</p>
-                            </div>
-                            <div class="ml-4 flex items-center space-x-2">
-                                <span class="px-3 py-1 text-xs font-semibold bg-orange-500/20 text-orange-300 rounded-lg">
+                        <div class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-start justify-between mb-1">
+                                <p class="font-medium text-gray-900 text-sm">{{ $product->name }}</p>
+                                <span class="text-xs font-semibold text-orange-700 bg-orange-100 px-2 py-1 rounded">
                                     {{ $product->current_stock }} {{ $product->unit }}
                                 </span>
                             </div>
+                            <p class="text-xs text-gray-500">{{ $product->category->name ?? 'Uncategorized' }}</p>
                         </div>
                     @empty
-                        <div class="text-center py-8 text-gray-400">
-                            <span class="material-icons text-4xl mb-2">check_circle</span>
-                            <p>All products have sufficient stock</p>
+                        <div class="px-6 py-12 text-center text-gray-500">
+                            <p class="text-sm">All products have sufficient stock</p>
                         </div>
                     @endforelse
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Recent Transactions -->
-            <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white">Recent Transactions</h3>
-                    <a href="{{ route('stock.transactions') }}"
-                        class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">View All</a>
-                </div>
-                <div class="space-y-3 max-h-80 overflow-y-auto">
-                    @forelse($recentTransactions as $transaction)
-                        <div
-                            class="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
-                            <div class="flex items-center space-x-3 flex-1 min-w-0">
-                                <div
-                                    class="w-10 h-10 rounded-lg flex items-center justify-center
-                                                {{ $transaction->type === 'in' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' }}">
-                                    <span class="material-icons text-xl">
-                                        {{ $transaction->type === 'in' ? 'add' : 'remove' }}
-                                    </span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-white truncate">{{ $transaction->product->name }}</p>
-                                    <p class="text-xs text-gray-400">{{ $transaction->transaction_date->format('d M Y, H:i') }}
-                                    </p>
-                                </div>
-                            </div>
-                            <span class="ml-4 text-sm font-semibold 
-                                            {{ $transaction->type === 'in' ? 'text-green-400' : 'text-red-400' }}">
-                                {{ $transaction->type === 'in' ? '+' : '' }}{{ $transaction->quantity }}
-                            </span>
-                        </div>
-                    @empty
-                        <div class="text-center py-8 text-gray-400">
-                            <span class="material-icons text-4xl mb-2">history</span>
-                            <p>No transactions yet</p>
-                        </div>
-                    @endforelse
-                </div>
+        <!-- Stock Movement Chart -->
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Stock Movement (Last 7 Days)</h2>
             </div>
-
-            <!-- Expiring Products -->
-            <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-white">Expiring Soon</h3>
-                    <a href="{{ route('reports.expiry') }}"
-                        class="text-indigo-400 hover:text-indigo-300 text-sm font-medium">View All</a>
+            <div class="p-6">
+                <div class="h-64">
+                    <canvas id="stockMovementChart"></canvas>
                 </div>
-                <div class="space-y-3 max-h-80 overflow-y-auto">
-                    @forelse($expiringProducts as $product)
-                        <div
-                            class="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600/50 hover:border-yellow-500/50 transition-colors">
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-white truncate">{{ $product->name }}</p>
-                                <p class="text-xs text-gray-400">{{ $product->category->name ?? 'Uncategorized' }}</p>
-                            </div>
-                            <div class="ml-4">
-                                <span class="px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-300 rounded-lg">
-                                    {{ $product->expiry_date->format('d M Y') }}
-                                </span>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center py-8 text-gray-400">
-                            <span class="material-icons text-4xl mb-2">check_circle</span>
-                            <p>No products expiring soon</p>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-            <h3 class="text-lg font-semibold text-white mb-6">Quick Actions</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="{{ route('products.create') }}"
-                    class="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl hover:shadow-lg hover:shadow-indigo-500/50 transition-all">
-                    <span class="material-icons text-4xl mb-2">add_box</span>
-                    <span class="text-sm font-medium">Add Product</span>
-                </a>
-                <a href="{{ route('stock.transactions') }}"
-                    class="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-green-600 to-emerald-600 rounded-xl hover:shadow-lg hover:shadow-green-500/50 transition-all">
-                    <span class="material-icons text-4xl mb-2">system_update_alt</span>
-                    <span class="text-sm font-medium">Stock In</span>
-                </a>
-                <a href="{{ route('stock.transactions') }}"
-                    class="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-orange-600 to-red-600 rounded-xl hover:shadow-lg hover:shadow-orange-500/50 transition-all">
-                    <span class="material-icons text-4xl mb-2">local_shipping</span>
-                    <span class="text-sm font-medium">Stock Out</span>
-                </a>
-                <a href="{{ route('reports.stock-value') }}"
-                    class="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all">
-                    <span class="material-icons text-4xl mb-2">assessment</span>
-                    <span class="text-sm font-medium">Reports</span>
-                </a>
             </div>
         </div>
     </div>
@@ -208,52 +155,88 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Stock Movement Chart
-        const ctx = document.getElementById('stockMovementChart').getContext('2d');
-        const chartData = @json($stockMovementData);
+        const ctx = document.getElementById('stockMovementChart')?.getContext('2d');
+        if (ctx) {
+            const chartData = @json($stockMovementData ?? []);
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartData.map(d => new Date(d.date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })),
-                datasets: [
-                    {
-                        label: 'Stock In',
-                        data: chartData.map(d => d.stock_in),
-                        borderColor: 'rgb(34, 197, 94)',
-                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Stock Out',
-                        data: chartData.map(d => d.stock_out),
-                        borderColor: 'rgb(239, 68, 68)',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        labels: { color: '#e2e8f0' }
-                    }
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => {
+                        const date = new Date(d.date);
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }),
+                    datasets: [
+                        {
+                            label: 'Stock In',
+                            data: chartData.map(d => d.stock_in || 0),
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.05)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointBackgroundColor: '#059669',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Stock Out',
+                            data: chartData.map(d => d.stock_out || 0),
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.05)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointBackgroundColor: '#dc2626',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: '#94a3b8' },
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 13, weight: 500 },
+                                color: '#374151'
+                            }
+                        }
                     },
-                    x: {
-                        ticks: { color: '#94a3b8' },
-                        grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12 }
+                            },
+                            grid: {
+                                color: '#e5e7eb',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: { size: 12 }
+                            },
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     </script>
 @endpush
